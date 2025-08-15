@@ -10,10 +10,9 @@ const __dirname = path.dirname(__filename);
 // Test the actual Node.js fs and path modules that the RPCs use
 describe("Default RPCs Tests", () => {
   test("fs.readFile should read file content", async () => {
-    const testFile = path.join(__dirname, "test-file.txt");
-    const testContent = "test content";
+    const testFile = path.join(__dirname, "test-read-rpcs.txt");
+    const testContent = "test read content";
 
-    // Create test file
     fs.writeFileSync(testFile, testContent);
 
     try {
@@ -23,15 +22,20 @@ describe("Default RPCs Tests", () => {
         "Should read correct file content",
       );
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
 
   test("fs.writeFile should write file content", async () => {
-    const testFile = path.join(__dirname, "test-write.txt");
+    const testFile = path.join(__dirname, "test-write-rpcs.txt");
     const testContent = "test write content";
 
     try {
@@ -44,15 +48,20 @@ describe("Default RPCs Tests", () => {
         "File should contain written content",
       );
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
 
   test("fs.exists should check file existence", async () => {
-    const testFile = path.join(__dirname, "test-exists.txt");
+    const testFile = path.join(__dirname, "test-exists-rpcs.txt");
 
     // Test non-existent file
     const existsBefore = fs.existsSync(testFile);
@@ -64,15 +73,20 @@ describe("Default RPCs Tests", () => {
       const existsAfter = fs.existsSync(testFile);
       assert(existsAfter, "Existent file should return true");
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
 
   test("fs.stat should return file stats", async () => {
-    const testFile = path.join(__dirname, "test-stat.txt");
+    const testFile = path.join(__dirname, "test-stat-rpcs.txt");
     const testContent = "test stat content";
 
     fs.writeFileSync(testFile, testContent);
@@ -88,24 +102,34 @@ describe("Default RPCs Tests", () => {
         "size should match content length",
       );
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
 
   test("fs.mkdir should create directory", async () => {
-    const testDir = path.join(__dirname, "test-dir");
+    const testDir = path.join(__dirname, "test-dir-rpcs");
 
     try {
       await fs.promises.mkdir(testDir, { recursive: true });
       assert(fs.existsSync(testDir), "Directory should be created");
       assert(fs.statSync(testDir).isDirectory(), "Should be a directory");
     } finally {
-      // Clean up
-      if (fs.existsSync(testDir)) {
-        fs.rmdirSync(testDir);
+      // Clean up - use async rmdir to avoid race conditions
+      try {
+        await fs.promises.rmdir(testDir);
+      } catch (err) {
+        // Ignore errors if directory doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
@@ -152,7 +176,7 @@ describe("Default RPCs Tests", () => {
   });
 
   test("fs.readFile should handle Buffer input", async () => {
-    const testFile = path.join(__dirname, "test-buffer.txt");
+    const testFile = path.join(__dirname, "test-buffer-rpcs.txt");
     const testContent = Buffer.from("test buffer content");
 
     fs.writeFileSync(testFile, testContent);
@@ -165,15 +189,20 @@ describe("Default RPCs Tests", () => {
         "Should read correct buffer content",
       );
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
 
   test("fs.writeFile should handle Buffer input", async () => {
-    const testFile = path.join(__dirname, "test-write-buffer.txt");
+    const testFile = path.join(__dirname, "test-write-buffer-rpcs.txt");
     const testContent = Buffer.from("test write buffer content");
 
     try {
@@ -187,9 +216,14 @@ describe("Default RPCs Tests", () => {
         "File should contain written buffer content",
       );
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });

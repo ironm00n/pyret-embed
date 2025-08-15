@@ -6,6 +6,10 @@
   "main": "./dist/pyret.cjs",
   "module": "./dist/pyret.js",
   "types": "./dist/pyret.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ironm00n/pyret-embed.git"
+  },
   "exports": {
     ".": {
       "import": "./dist/pyret.js",

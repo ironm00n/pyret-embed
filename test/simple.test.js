@@ -9,10 +9,9 @@ const __dirname = path.dirname(__filename);
 
 describe("Simple Tests", () => {
   test("fs.readFile should read file content", async () => {
-    const testFile = path.join(__dirname, "test-file.txt");
-    const testContent = "test content";
+    const testFile = path.join(__dirname, "test-read.txt");
+    const testContent = "test read content";
 
-    // Create test file
     fs.writeFileSync(testFile, testContent);
 
     try {
@@ -22,15 +21,20 @@ describe("Simple Tests", () => {
         "Should read correct file content",
       );
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
 
   test("fs.writeFile should write file content", async () => {
-    const testFile = path.join(__dirname, "test-write.txt");
+    const testFile = path.join(__dirname, "test-write-simple.txt");
     const testContent = "test write content";
 
     try {
@@ -43,15 +47,20 @@ describe("Simple Tests", () => {
         "File should contain written content",
       );
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
 
   test("fs.exists should check file existence", async () => {
-    const testFile = path.join(__dirname, "test-exists.txt");
+    const testFile = path.join(__dirname, "test-exists-simple.txt");
 
     // Test non-existent file
     const existsBefore = fs.existsSync(testFile);
@@ -63,9 +72,14 @@ describe("Simple Tests", () => {
       const existsAfter = fs.existsSync(testFile);
       assert(existsAfter, "Existent file should return true");
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
@@ -112,7 +126,7 @@ describe("Simple Tests", () => {
   });
 
   test("fs.readFile should handle Buffer input", async () => {
-    const testFile = path.join(__dirname, "test-buffer.txt");
+    const testFile = path.join(__dirname, "test-buffer-simple.txt");
     const testContent = Buffer.from("test buffer content");
 
     fs.writeFileSync(testFile, testContent);
@@ -125,15 +139,20 @@ describe("Simple Tests", () => {
         "Should read correct buffer content",
       );
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
 
   test("fs.writeFile should handle Buffer input", async () => {
-    const testFile = path.join(__dirname, "test-write-buffer.txt");
+    const testFile = path.join(__dirname, "test-write-buffer-simple.txt");
     const testContent = Buffer.from("test write buffer content");
 
     try {
@@ -147,9 +166,14 @@ describe("Simple Tests", () => {
         "File should contain written buffer content",
       );
     } finally {
-      // Clean up
-      if (fs.existsSync(testFile)) {
-        fs.unlinkSync(testFile);
+      // Clean up - use async unlink to avoid race conditions
+      try {
+        await fs.promises.unlink(testFile);
+      } catch (err) {
+        // Ignore errors if file doesn't exist
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
   });
