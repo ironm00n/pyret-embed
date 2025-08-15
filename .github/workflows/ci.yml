@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm run test:run
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.node-version }}
+          path: dist/
+          retention-days: 7
+
+      - name: Test build output
+        run: |
+          # Check ESM files
+          test -f dist/pyret.js
+          test -f dist/api.js
+          test -f dist/default-rpcs.js
+          # Check CommonJS files
+          test -f dist/pyret.cjs
+          test -f dist/api.cjs
+          test -f dist/default-rpcs.cjs
+          # Check TypeScript declaration files
+          test -f dist/pyret.d.ts
+          test -f dist/api.d.ts
+          test -f dist/default-rpcs.d.ts
+          echo "Build artifacts verified ✓"

@@ -1,62 +1,134 @@
-## Installation and Use
+# @ironm00n/pyret-embed
 
-- Copy `node_modules/dist/` to where you serve static files
-- Note that all the Pyret stuff is set up to correctly work with relative paths
-internally. You just need to make sure the paths to pyret.js and
-editor.embed.html work from your source.
-- From your website:
-- ```
-      <script type="module" src="/dist/pyret.js"></script>
-      <div id="example1" class="embed-container"></div>
-      <script type="module">
-  async function example1() {
-        const iframeContainer = document.getElementById("example1");
-        const embed = await makeEmbed('basic1', iframeContainer, "/dist/build/web/editor.embed.html#hideFooter=true");
+A modern, TypeScript-first library for embedding Pyret into webpages with Next.js 14+ support.
+
+## Installation
+
+```bash
+npm install @ironm00n/pyret-embed
+```
+
+## Browser Support
+
+This library targets modern browsers and requires:
+
+- ES2024 features support (including `Promise.withResolvers()`)
+
+## Usage
+
+### Next.js 14+ (App Router)
+
+```tsx
+"use client";
+
+import { useEffect, useRef } from "react";
+import { makeEmbedConfig } from "@ironm00n/pyret-embed";
+
+export default function PyretEmbed() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    makeEmbedConfig({
+      container: containerRef.current,
+      state: {
+        editorContents: "use context starter2024\n\n'Hello from Next.js!'",
+        replContents: "",
+        definitionsAtLastRun: "",
+        interactionsSinceLastRun: [],
+      },
+      options: {
+        footerStyle: "hide",
+        warnOnExit: false,
+      },
+    });
+  }, []);
+
+  return <div ref={containerRef} className="w-full h-96" />;
+}
+```
+
+### Traditional HTML/JavaScript
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="module">
+      import { makeEmbed } from "@ironm00n/pyret-embed/api";
+
+      async function initPyret() {
+        const container = document.getElementById("pyret-container");
+        const embed = await makeEmbed("pyret-1", container);
 
         embed.sendReset({
-          definitionsAtLastRun: "use context starter2024\n\n'Hello!'",
+          editorContents: "use context starter2024\n\n'Hello World!'",
+          replContents: "",
+          definitionsAtLastRun: "",
           interactionsSinceLastRun: [],
-          editorContents: "use context starter2024\n\n'Hello!'",
-          replContents: ""
         });
       }
-      example1();
-      </script>
-   ```
-See examples/ for more examples!
 
-## API
-
-```
-type State = {
-    definitionsAtLastRun: string;
-    interactionsSinceLastRun: string[];
-    editorContents: string;
-    replContents: string;
-    messageNumber?: number;
-};
-type API = {
-    sendReset: (state: State) => void;
-    postMessage: (message: any) => void;
-    getFrame: () => HTMLIFrameElement;
-    setInteractions: (text: string) => void;
-    runDefinitions: () => void;
-    runInteractionResult: () => Promise<any>;
-    onChange: (callback: ((msg: any) => void)) => void;
-    clearInteractions: () => void;
-    currentState: () => State;
-};
-declare function makeEmbed(id: string, container: HTMLElement, src?: string): Promise<API>;
+      window.addEventListener("load", initPyret);
+    </script>
+  </head>
+  <body>
+    <div id="pyret-container" style="width: 100%; height: 400px;"></div>
+  </body>
+</html>
 ```
 
-## Running Examples in This Repo
+### Vanilla JavaScript
 
-To see the examples in this repository:
+```javascript
+import { makeEmbed } from "@ironm00n/pyret-embed/api";
 
+const container = document.getElementById("pyret-container");
+makeEmbed("pyret-1", container).then((embed) => {
+  embed.sendReset({
+    editorContents: "use context starter2024\n\n'Hello!'",
+    replContents: "",
+    definitionsAtLastRun: "",
+    interactionsSinceLastRun: [],
+  });
+});
 ```
-$ git clone ...
-$ npm install
-$ python3 -m http.server # or your favorite static server
+
+## API Reference
+
+See [src/pyret.ts](src/pyret.ts) for full API documentation.
+
+## Development
+
+### With Nix (Recommended)
+
+```bash
+nix develop
+npm install
+npm run build
 ```
 
-Then open [localhost:8000/examples/basic.html](http://localhost:8000/src/basic.html) in browser.
+### Without Nix
+
+```bash
+npm install
+npm run build
+```
+
+### Available Scripts
+
+- `npm run build` - Build the package
+- `npm run dev` - Build in watch mode
+- `npm run clean` - Clean build artifacts
+- `npm run typecheck` - Type check without building
+
+## Examples
+
+See the `examples/` directory for complete working examples:
+
+- `basic.html` - Basic HTML usage
+- `fs.html` - File system integration
+- `nextjs-example.tsx` - Next.js component
+- `simple-test.html` - Simple test page
+- Various JavaScript examples

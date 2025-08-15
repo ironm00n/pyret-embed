@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.git/
+examples/
+*.min.js
+*.min.css
+*.html
+package-lock.json
+flake.lock 

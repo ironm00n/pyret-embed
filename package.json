@@ -1,30 +1,79 @@
 {
   "name": "pyret-embed",
-  "version": "0.0.6",
-  "description": "A library for embedding Pyret into webpages",
-  "main": "dist/pyret.js",
+  "version": "0.0.1-pre.0",
+  "description": "A modern library for embedding Pyret into webpages with Next.js 14+ support",
+  "type": "module",
+  "main": "./dist/pyret.cjs",
+  "module": "./dist/pyret.js",
+  "types": "./dist/pyret.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/pyret.js",
+      "require": "./dist/pyret.cjs",
+      "types": "./dist/pyret.d.ts"
+    },
+    "./api": {
+      "import": "./dist/api.js",
+      "require": "./dist/api.cjs",
+      "types": "./dist/api.d.ts"
+    }
+  },
   "files": [
     "dist",
-    "types"
+    "README.md"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc; cd node_modules/code.pyret.org; make link-pyret; npm run build; cd ../..; npm run copy-pyret",
-    "copy-pyret": "cp -r node_modules/code.pyret.org/build dist/"
+    "build": "tsc && npm run build:esm && npm run build:cjs",
+    "build:esm": "esbuild src/pyret.ts src/api.ts src/default-rpcs.ts --bundle --format=esm --outdir=dist --target=chrome120,firefox121 --platform=browser --sourcemap --define:process.env.NODE_ENV=\\\"production\\\" --external:fs --external:path --external:process",
+    "build:cjs": "esbuild src/pyret.ts src/api.ts src/default-rpcs.ts --bundle --format=cjs --outdir=dist --target=chrome120,firefox121 --platform=browser --sourcemap --define:process.env.NODE_ENV=\\\"production\\\" --external:fs --external:path --external:process --out-extension:.js=.cjs",
+    "dev": "tsc --watch & esbuild src/pyret.ts src/api.ts src/default-rpcs.ts --bundle --format=esm --outdir=dist --target=chrome120,firefox121 --platform=browser --sourcemap --define:process.env.NODE_ENV=\\\"production\\\" --external:fs --external:path --external:process --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "typecheck": "tsc --noEmit",
+    "pretest": "npm run build",
+    "test": "node --test",
+    "test:run": "npm run build && node --test",
+    "test:coverage": "npm run build && c8 --reporter=text --reporter=html --reporter=lcov node --test",
+    "test:watch": "npm run build && node --test --watch",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --ext .ts,.js",
+    "lint:fix": "eslint . --ext .ts,.js --fix"
   },
+  "keywords": [
+    "pyret",
+    "programming-language",
+    "education",
+    "embed",
+    "nextjs",
+    "typescript"
+  ],
   "author": "",
   "license": "ISC",
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
   "dependencies": {
     "@zenfs/core": "^2.2.3",
     "mustache": "^4.2.0",
     "path-browserify": "^1.0.1",
-    "process": "^0.11.10",
-    "ts-loader": "^9.5.2",
-    "typescript": "^5.8.3",
-    "webpack": "^5.99.9"
+    "process": "^0.11.10"
   },
   "devDependencies": {
-    "code.pyret.org": "github:brownplt/code.pyret.org#horizon",
-    "webpack-cli": "^6.0.1"
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.1.10",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "c8": "^9.1.0",
+    "esbuild": "^0.20.0",
+    "eslint": "^8.57.0",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.2.5",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0",
+    "react": ">=18.0.0"
   }
 }
