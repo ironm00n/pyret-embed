@@ -6,7 +6,6 @@ async function fsExample1() {
   makeEmbedConfig({
     container: iframeContainer,
     rpc: rpc,
-    src: "../dist/build/web/editor.embed.html",
     state: {
       editorContents: `use context starter2024
 

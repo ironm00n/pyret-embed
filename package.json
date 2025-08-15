@@ -1,5 +1,5 @@
 {
-  "name": "pyret-embed",
+  "name": "@ironm00n/pyret-embed",
   "version": "0.0.1-pre.0",
   "description": "A modern library for embedding Pyret into webpages with Next.js 14+ support",
   "type": "module",
@@ -20,11 +20,17 @@
       "import": "./dist/api.js",
       "require": "./dist/api.cjs",
       "types": "./dist/api.d.ts"
+    },
+    "./default-rpcs": {
+      "import": "./dist/default-rpcs.cjs",
+      "require": "./dist/default-rpcs.cjs",
+      "types": "./dist/default-rpcs.d.ts"
     }
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "npm run types && rspack build --config rspack.config.cjs",
@@ -53,15 +59,21 @@
   ],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ironm00n/pyret-embed/issues"
+  },
+  "homepage": "https://github.com/ironm00n/pyret-embed#readme",
   "publishConfig": {
     "provenance": true,
     "access": "public"
   },
   "dependencies": {
     "@zenfs/core": "^2.2.3",
+    "buffer": "^6.0.3",
     "mustache": "^4.2.0",
     "path-browserify": "^1.0.1",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@rspack/cli": "^1.1.7",

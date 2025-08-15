@@ -24,9 +24,9 @@ module.exports = [
     resolve: {
       extensions: [".ts", ".js"],
       fallback: {
-        fs: false,
-        path: false,
-        process: false,
+        fs: require.resolve("@zenfs/core"),
+        path: require.resolve("path-browserify"),
+        process: require.resolve("process/browser"),
       },
     },
 

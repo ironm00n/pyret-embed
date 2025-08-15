@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { makeEmbedConfig } from "../src/pyret";
+import { makeEmbedConfig } from "@ironm00n/pyret-embed";
 
 export default function PyretEmbedExample() {
   const containerRef = useRef<HTMLDivElement>(null);
