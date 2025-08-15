@@ -27,10 +27,9 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc && npm run build:esm && npm run build:cjs",
-    "build:esm": "esbuild src/pyret.ts src/api.ts src/default-rpcs.ts --bundle --format=esm --outdir=dist --target=chrome120,firefox121 --platform=browser --sourcemap --define:process.env.NODE_ENV=\\\"production\\\" --external:fs --external:path --external:process",
-    "build:cjs": "esbuild src/pyret.ts src/api.ts src/default-rpcs.ts --bundle --format=cjs --outdir=dist --target=chrome120,firefox121 --platform=browser --sourcemap --define:process.env.NODE_ENV=\\\"production\\\" --external:fs --external:path --external:process --out-extension:.js=.cjs",
-    "dev": "tsc --watch & esbuild src/pyret.ts src/api.ts src/default-rpcs.ts --bundle --format=esm --outdir=dist --target=chrome120,firefox121 --platform=browser --sourcemap --define:process.env.NODE_ENV=\\\"production\\\" --external:fs --external:path --external:process --watch",
+    "build": "npm run types && rspack build --config rspack.config.cjs",
+    "dev": "tsc --watch & rspack build --watch --config rspack.config.cjs",
+    "types": "tsc --emitDeclarationOnly",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run clean && npm run build",
     "typecheck": "tsc --noEmit",
@@ -65,12 +64,13 @@
     "process": "^0.11.10"
   },
   "devDependencies": {
+    "@rspack/cli": "^1.1.7",
+    "@rspack/core": "^1.1.7",
     "@types/node": "^20.0.0",
     "@types/react": "^19.1.10",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "c8": "^9.1.0",
-    "esbuild": "^0.20.0",
     "eslint": "^8.57.0",
     "jsdom": "^25.0.1",
     "prettier": "^3.2.5",
