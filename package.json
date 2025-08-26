@@ -1,6 +1,6 @@
 {
   "name": "@ironm00n/pyret-embed",
-  "version": "0.0.1-pre.1",
+  "version": "0.0.1",
   "description": "A modern library for embedding Pyret into webpages with Next.js 14+ support",
   "type": "module",
   "main": "./dist/pyret.cjs",
